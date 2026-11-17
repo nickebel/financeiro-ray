@@ -65,7 +65,7 @@ function applyTheme(theme,persist=false){
  const dark=mode==="dark";
  document.documentElement.dataset.theme=mode;
  const meta=$("themeColorMeta");
- if(meta)meta.setAttribute("content",dark?"#071B31":"#FAFAFA");
+ if(meta)meta.setAttribute("content",dark?"#071B31":"#F1EEE7");
  const button=$("themeToggleBtn"),label=$("themeToggleLabel");
  if(button){
   const next=dark?"Modo claro":"Modo azul";
