@@ -2,16 +2,21 @@
 <html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" id="themeColorMeta" content="#FAFAFA">
+<meta name="theme-color" id="themeColorMeta" content="#F1EEE7">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ray">
-<link rel="manifest" href="manifest.webmanifest"><meta name="description" content="Ray: um espaço simples para acompanhar entradas, despesas, cartões, contas e objetivos.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="Ray — finanças pessoais com interface de colagem editorial e registros guardados no navegador deste aparelho.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ray — Finanças pessoais">
+<meta property="og:description" content="Organização financeira em uma interface de colagem editorial.">
+<meta property="og:url" content="https://nickebel.github.io/financeiro-ray/">
 <title>Ray — Finanças pessoais</title>
-<link rel="icon" href="favicon.svg?v=ray-20261117-1" type="image/svg+xml">
-<link rel="apple-touch-icon" href="app-icon.svg">
-
+<link rel="icon" href="favicon.svg?v=ray-20261117-2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="app-icon.svg?v=ray-20261117-2">
 <link rel="stylesheet" href="style.css?v=ray-20261117-1">
+<link rel="stylesheet" href="collage.css?v=ray-20261117-2">
 
 
 </head>
@@ -21,7 +26,7 @@
 <div id="app" class="app hidden">
   <aside class="sidebar">
     <div class="sidebar-head">
-      <a class="brand" href="./" aria-label="Ray"><span>Ray</span></a>
+      <a class="brand" href="./" aria-label="Ray — início"><img class="brand-symbol" src="brand-mark.svg?v=ray-20261117-2" alt=""><span>Ray</span></a>
       <button id="menuBtn" class="icon-btn mobile-menu" type="button" aria-label="Abrir menu" aria-controls="navigation" aria-expanded="false">☰</button>
     </div>
     <nav id="navigation">
@@ -31,6 +36,7 @@
       <button type="button" class="nav-item" data-page="bills"><span>◷</span> Contas a pagar</button>
       <button type="button" class="nav-item" data-page="goals"><span>◎</span> Metas de economia</button>
       <button type="button" class="nav-item" data-page="reports"><span>▥</span> Relatórios</button>
+      <button type="button" class="nav-item" data-page="privacy"><span>◇</span> Dados e privacidade</button>
     </nav>
     <div class="sidebar-bottom"><div class="privacy-note"><div><strong>Salvo neste aparelho</strong><small>Exporte um backup regularmente.</small></div></div></div>
   </aside>
@@ -55,7 +61,7 @@
         </div>
         <div class="filter-row"><label for="monthFilter">Período</label><input id="monthFilter" type="month" aria-label="Selecionar período"></div>
         <div class="summary-grid" aria-label="Resumo financeiro do período">
-          <article class="summary-card balance-card"><div class="summary-top"><span>Saldo do período</span></div><strong id="balanceValue">R$ 0,00</strong><small id="balanceHint">Entradas menos despesas</small></article>
+          <article class="summary-card balance-card"><div class="summary-top"><span>Resultado do mês</span></div><strong id="balanceValue">R$ 0,00</strong><small id="balanceHint">Entradas menos despesas</small></article>
           <article class="summary-card"><div class="summary-top"><span>Entradas</span></div><strong id="incomeValue">R$ 0,00</strong><small class="muted">Dinheiro recebido</small></article>
           <article class="summary-card"><div class="summary-top"><span>Despesas</span></div><strong id="expenseValue">R$ 0,00</strong><small class="muted">Dinheiro gasto</small></article>
         </div>
@@ -85,17 +91,57 @@
         <div id="billsTable" class="table-region"></div>
       </section><section id="goalsPage" class="page hidden"><div class="section-intro"><div><h3>Metas de economia</h3><p class="muted">Separe dinheiro, no seu ritmo, para o que importa.</p></div><button type="button" class="btn primary" id="addGoalBtn">＋ Nova meta</button></div><div id="goalsList" class="goals-grid"></div></section>
       <section id="reportsPage" class="page hidden"><div class="section-intro"><div><h3>Relatórios</h3><p class="muted">Uma leitura do mês para entender para onde o dinheiro foi.</p></div></div><div class="summary-grid report-summary"><article class="summary-card"><span class="muted">Taxa de economia</span><strong id="savingRate">Sem dados</strong><small class="muted">Saldo ÷ entradas</small></article><article class="summary-card"><span class="muted">Maior categoria</span><strong id="topCategory">Sem dados</strong><small class="muted">No período selecionado</small></article></div><section class="report-region" aria-labelledby="reportCategoriesHeading"><div class="panel-heading"><div><h3 id="reportCategoriesHeading">Resumo por categoria</h3><p class="muted">Despesas no período selecionado</p></div></div><div id="reportCategories"></div></section></section>
+      <section id="privacyPage" class="page hidden">
+        <div class="section-intro"><div><h3>Dados e privacidade</h3><p class="muted">Como o Ray guarda suas informações nesta versão.</p></div></div>
+        <article class="privacy-paper">
+          <p class="privacy-kicker">INFORMAÇÕES DO APLICATIVO</p>
+          <h3>Seus registros ficam no navegador deste aparelho.</h3>
+          <p>O Ray não possui conta de usuário nem sincronização financeira em nuvem. Os lançamentos, cartões, parcelas, contas e metas são guardados no IndexedDB do navegador em que foram cadastrados.</p>
+          <h4>O que é armazenado</h4>
+          <ul>
+            <li>Entradas, despesas, categorias, datas e observações.</li>
+            <li>Nome dos cartões, instituição, bandeira e, se informado, apenas os quatro últimos dígitos.</li>
+            <li>Compras parceladas, contas a pagar, metas e contribuições.</li>
+            <li>Preferência de tema, armazenada separadamente no navegador.</li>
+          </ul>
+          <h4>Onde os dados ficam</h4>
+          <p>Os registros financeiros são gravados no IndexedDB do perfil do navegador utilizado. O GitHub Pages entrega os arquivos públicos do Ray, mas o código do aplicativo não envia os registros financeiros ao GitHub nem a um servidor de sincronização.</p>
+          <p>Qualquer pessoa que abra o endereço pode utilizar sua própria cópia local. Os dados não são compartilhados automaticamente entre iPhone, computador ou navegadores diferentes. Pessoas que utilizem o mesmo aparelho e o mesmo perfil do navegador podem ter acesso aos registros locais.</p>
+          <h4>Backups e perda de dados</h4>
+          <p>O backup é exportado em arquivo JSON sem criptografia criada pelo Ray. Guarde-o em local privado e não compartilhe o arquivo. Limpar os dados do Safari, trocar de perfil ou perder o aparelho pode apagar os registros. Antes de trocar de dispositivo, exporte o backup no aparelho antigo e restaure-o no novo.</p>
+          <h4>Uso offline</h4>
+          <p>O Service Worker guarda arquivos da interface para facilitar a abertura de recursos já carregados. Esse cache não é o banco de dados financeiro. O aplicativo não acessa automaticamente contas bancárias nem confirma transações; os dados são informados manualmente.</p>
+          <div class="privacy-note-box"><strong>Nota</strong><p>Este texto descreve o funcionamento técnico do Ray e não é uma política jurídica completa. O responsável informado pelo projeto é Ray Cleverson. Um canal público de contato ainda não foi fornecido.</p></div>
+        </article>
+      </section>
     </div>
-    <footer>Seus lançamentos ficam salvos neste aparelho. Faça um backup antes de trocar de dispositivo. <span>Valores em reais (BRL).</span></footer>
+    <footer><span>Seus registros ficam neste navegador. Faça backups regularmente.</span><span>Valores em reais (BRL). <a href="#privacy" data-goto="privacy">Dados e privacidade</a></span></footer>
+    <nav id="mobileTabbar" class="mobile-tabbar" aria-label="Navegação principal">
+      <button type="button" class="mobile-tab" data-page="dashboard" aria-label="Início"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg><small>Início</small></button>
+      <button type="button" class="mobile-tab" data-page="transactions" aria-label="Lançamentos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v15m0 0-4-4m4 4 4-4M17 20V5m0 0-4 4m4-4 4 4"/></svg><small>Movimentos</small></button>
+      <button type="button" class="mobile-tab" data-page="cards" aria-label="Cartões"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 9h18M7 15h4"/></svg><small>Cartões</small></button>
+      <button type="button" class="mobile-tab" data-page="bills" aria-label="Contas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4m8-4v4M3 9h18m-13 4h3m-3 4h6"/></svg><small>Contas</small></button>
+      <button type="button" class="mobile-tab mobile-more-toggle" id="mobileMoreToggle" aria-label="Mais opções" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg><small>Mais</small></button>
+      <div id="mobileMoreMenu" class="mobile-more-menu hidden" aria-label="Mais páginas e ações">
+        <button type="button" data-page="goals">Metas de economia</button>
+        <button type="button" data-page="reports">Relatórios</button>
+        <button type="button" data-page="privacy">Dados e privacidade</button>
+        <span class="mobile-more-divider"></span>
+        <button type="button" data-action="theme">Alternar tema</button>
+        <button type="button" data-action="backup">Baixar backup</button>
+        <button type="button" data-action="restore">Restaurar backup</button>
+        <button type="button" data-action="install">Como adicionar ao iPhone</button>
+      </div>
+    </nav>
   </main>
 </div>
-<dialog id="modalBackdrop" class="modal-backdrop" aria-labelledby="modalTitle"><section class="modal"><div class="modal-head"><div><h3 id="modalTitle">Novo lançamento</h3></div><button type="button" id="closeModalBtn" class="icon-btn" aria-label="Fechar">×</button></div><form id="editorForm"><div id="modalFields" class="form-grid"></div><div class="form-actions"><button type="button" id="cancelModalBtn" class="btn secondary">Cancelar</button><button class="btn primary" type="submit">Salvar</button></div><p id="formMessage" class="message" role="status"></p></form></section></dialog>
+<dialog id="modalBackdrop" class="modal-backdrop" aria-labelledby="modalTitle"><section class="modal"><div class="modal-head"><div><h3 id="modalTitle" tabindex="-1">Novo lançamento</h3></div><button type="button" id="closeModalBtn" class="icon-btn" aria-label="Fechar">×</button></div><form id="editorForm"><div id="modalFields" class="form-grid"></div><div class="form-actions"><button type="button" id="cancelModalBtn" class="btn secondary">Cancelar</button><button class="btn primary" type="submit">Salvar</button></div><p id="formMessage" class="message" role="status"></p></form></section></dialog>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"><span id="toastMessage"></span><button type="button" id="toastCloseBtn" class="toast-close" aria-label="Fechar aviso">×</button></div>
 
 
 
 
 <script src="offline-store.js?v=ray-20261117-1"></script>
-<script src="app.js?v=ray-20261117-1"></script>
-<script src="pwa.js?v=ray-20261117-1"></script>
+<script src="app.js?v=ray-20261117-2"></script>
+<script src="pwa.js?v=ray-20261117-2"></script>
 </body></html>
