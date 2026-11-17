@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" id="themeColorMeta" content="#FAFAFA">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ray">
+<link rel="manifest" href="manifest.webmanifest"><meta name="description" content="Ray: um espaço simples para acompanhar entradas, despesas, cartões, contas e objetivos.">
+<title>Ray — Finanças pessoais</title>
+<link rel="icon" href="favicon.svg?v=ray-20261117-1" type="image/svg+xml">
+<link rel="apple-touch-icon" href="app-icon.svg">
+
+<link rel="stylesheet" href="style.css?v=ray-20261117-1">
+
+
+</head>
+<body>
+
+<div id="authScreen" class="hidden" aria-hidden="true"></div>
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <a class="brand" href="./" aria-label="Ray"><span>Ray</span></a>
+      <button id="menuBtn" class="icon-btn mobile-menu" type="button" aria-label="Abrir menu" aria-controls="navigation" aria-expanded="false">☰</button>
+    </div>
+    <nav id="navigation">
+      <button type="button" class="nav-item active" data-page="dashboard" aria-current="page"><span>◫</span> Visão geral</button>
+      <button type="button" class="nav-item" data-page="transactions"><span>↕</span> Lançamentos</button>
+      <button type="button" class="nav-item" data-page="cards"><span>▤</span> Cartões e parcelas</button>
+      <button type="button" class="nav-item" data-page="bills"><span>◷</span> Contas a pagar</button>
+      <button type="button" class="nav-item" data-page="goals"><span>◎</span> Metas de economia</button>
+      <button type="button" class="nav-item" data-page="reports"><span>▥</span> Relatórios</button>
+    </nav>
+    <div class="sidebar-bottom"><div class="privacy-note"><div><strong>Salvo neste aparelho</strong><small>Exporte um backup regularmente.</small></div></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-heading"><h2 id="pageTitle">Visão geral</h2></div>
+      <div class="top-actions">
+        <span id="syncStatus" class="sync-status" role="status" aria-live="polite">Salvo neste aparelho</span>
+        <button id="themeToggleBtn" class="btn secondary theme-toggle" type="button" aria-label="Ativar modo azul" aria-pressed="false" title="Mudar para tema azul"><span class="theme-toggle-symbol" aria-hidden="true">◐</span><span id="themeToggleLabel">Modo azul</span></button>
+        <button id="exportBackupBtn" class="btn secondary backup-btn" type="button" aria-label="Baixar backup" title="Baixar backup">Baixar backup</button>
+        <button id="importBackupBtn" class="btn secondary backup-btn" type="button" aria-label="Restaurar backup" title="Restaurar backup">Restaurar</button>
+        <input id="backupFileInput" class="hidden" type="file" accept="application/json,.json">
+        <button id="installAppBtn" class="btn secondary install-app-btn" type="button" aria-label="Instalar app" title="Instalar app">Instalar app</button>
+        <p id="installHelp" class="install-help hidden">No celular, abra o menu do navegador e escolha “Instalar app” ou “Adicionar à tela inicial”.</p>
+      </div>
+    </header>
+    <div id="content" class="content" aria-busy="false">
+      <section id="dashboardPage" class="page">
+        <div class="welcome-row">
+          <div><h3>Bom te ver, Ray.</h3><p class="muted">Veja o que entrou, o que saiu e o que vem pela frente.</p></div>
+          <button type="button" class="btn primary" id="quickAddBtn">＋ Novo lançamento</button>
+        </div>
+        <div class="filter-row"><label for="monthFilter">Período</label><input id="monthFilter" type="month" aria-label="Selecionar período"></div>
+        <div class="summary-grid" aria-label="Resumo financeiro do período">
+          <article class="summary-card balance-card"><div class="summary-top"><span>Saldo do período</span></div><strong id="balanceValue">R$ 0,00</strong><small id="balanceHint">Entradas menos despesas</small></article>
+          <article class="summary-card"><div class="summary-top"><span>Entradas</span></div><strong id="incomeValue">R$ 0,00</strong><small class="muted">Dinheiro recebido</small></article>
+          <article class="summary-card"><div class="summary-top"><span>Despesas</span></div><strong id="expenseValue">R$ 0,00</strong><small class="muted">Dinheiro gasto</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Despesas por categoria</h3><p class="muted">Como seu dinheiro foi usado</p></div></div>
+            <div id="categoryChart" class="category-chart" aria-live="polite"><div class="empty-state">Seus gastos aparecerão aqui quando você registrar lançamentos.</div></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Próximos vencimentos</h3><p class="muted">Contas que merecem atenção</p></div><button type="button" class="text-btn" data-goto="bills">Ver todas</button></div>
+            <div id="upcomingBills" class="compact-list" aria-live="polite"><div class="empty-state">Nenhuma conta cadastrada.</div></div>
+          </article>
+        </div>
+        <section class="ledger-section" aria-labelledby="recentHeading">
+          <div class="panel-heading"><div><h3 id="recentHeading">Últimos lançamentos</h3><p class="muted">Movimentações recentes</p></div><button type="button" class="text-btn" data-goto="transactions">Ver todos</button></div>
+          <div id="recentTransactions" aria-live="polite"></div>
+        </section>
+      </section><section id="transactionsPage" class="page hidden">
+        <div class="section-intro"><div><h3>Seus lançamentos</h3><p class="muted">Tudo o que entrou ou saiu, no mesmo lugar.</p></div><button type="button" class="btn primary" id="addTransactionBtn">＋ Adicionar</button></div>
+        <div class="table-panel">
+          <div class="toolbar"><input id="transactionSearch" type="search" placeholder="Buscar lançamento..." aria-label="Buscar lançamento"><select id="typeFilter" aria-label="Filtrar tipo"><option value="">Todos os tipos</option><option value="income">Entradas</option><option value="expense">Despesas</option></select></div>
+          <div id="transactionsTable" class="table-region"></div>
+        </div>
+      </section><section id="cardsPage" class="page hidden"><div class="section-intro"><div><h3>Cartões e parcelas</h3><p class="muted">Cartões, faturas e compras divididas em parcelas.</p></div><button type="button" class="btn primary" id="addCardBtn">＋ Novo cartão</button></div><div id="cardsList" class="cards-grid"></div><div class="section-intro sub-intro"><div><h3>Compras parceladas</h3><p class="muted">O valor mensal é calculado automaticamente.</p></div><button type="button" class="btn secondary" id="addInstallmentBtn">＋ Nova compra</button></div><div id="installmentsTable" class="table-region"></div></section>
+      <section id="billsPage" class="page hidden">
+        <div class="section-intro"><div><h3>Contas a pagar</h3><p class="muted">Veja o que está em aberto e marque quando pagar.</p></div><button type="button" class="btn primary" id="addBillBtn">＋ Nova conta</button></div>
+        <div id="billsTable" class="table-region"></div>
+      </section><section id="goalsPage" class="page hidden"><div class="section-intro"><div><h3>Metas de economia</h3><p class="muted">Separe dinheiro, no seu ritmo, para o que importa.</p></div><button type="button" class="btn primary" id="addGoalBtn">＋ Nova meta</button></div><div id="goalsList" class="goals-grid"></div></section>
+      <section id="reportsPage" class="page hidden"><div class="section-intro"><div><h3>Relatórios</h3><p class="muted">Uma leitura do mês para entender para onde o dinheiro foi.</p></div></div><div class="summary-grid report-summary"><article class="summary-card"><span class="muted">Taxa de economia</span><strong id="savingRate">Sem dados</strong><small class="muted">Saldo ÷ entradas</small></article><article class="summary-card"><span class="muted">Maior categoria</span><strong id="topCategory">Sem dados</strong><small class="muted">No período selecionado</small></article></div><section class="report-region" aria-labelledby="reportCategoriesHeading"><div class="panel-heading"><div><h3 id="reportCategoriesHeading">Resumo por categoria</h3><p class="muted">Despesas no período selecionado</p></div></div><div id="reportCategories"></div></section></section>
+    </div>
+    <footer>Seus lançamentos ficam salvos neste aparelho. Faça um backup antes de trocar de dispositivo. <span>Valores em reais (BRL).</span></footer>
+  </main>
+</div>
+<dialog id="modalBackdrop" class="modal-backdrop" aria-labelledby="modalTitle"><section class="modal"><div class="modal-head"><div><h3 id="modalTitle">Novo lançamento</h3></div><button type="button" id="closeModalBtn" class="icon-btn" aria-label="Fechar">×</button></div><form id="editorForm"><div id="modalFields" class="form-grid"></div><div class="form-actions"><button type="button" id="cancelModalBtn" class="btn secondary">Cancelar</button><button class="btn primary" type="submit">Salvar</button></div><p id="formMessage" class="message" role="status"></p></form></section></dialog>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"><span id="toastMessage"></span><button type="button" id="toastCloseBtn" class="toast-close" aria-label="Fechar aviso">×</button></div>
+
+
+
+
+<script src="offline-store.js?v=ray-20261117-1"></script>
+<script src="app.js?v=ray-20261117-1"></script>
+<script src="pwa.js?v=ray-20261117-1"></script>
+</body></html>

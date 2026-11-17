@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "Ray — Finanças pessoais",
+  "short_name": "Ray",
+  "description": "Controle suas entradas, despesas, cartões, contas e metas. Seus dados ficam salvos neste aparelho.",
+  "lang": "pt-BR",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#FAFAFA",
+  "orientation": "any",
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "app-icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "prefer_related_applications": false
+}
