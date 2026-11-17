@@ -1,0 +1,34 @@
+name: Hallmark design audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  floor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Financeiro Amigo
+        uses: actions/checkout@v4
+      - name: Checkout Hallmark v2.0.0
+        uses: actions/checkout@v4
+        with:
+          repository: Nutlope/hallmark
+          ref: 04977e15f3dfd6ee4b74c887dac3eb52665d6c92
+          path: .tools/hallmark
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check offline-store.js
+          node --check pwa.js
+          node --check sw.js
+      - name: Install browser audit dependency
+        run: npm install --no-save --package-lock=false puppeteer-core
+      - name: Run Hallmark app-screen audit
+        run: node .tools/hallmark/skills/hallmark/scripts/sloplint.mjs . --scope app --genre modern-minimal --render
