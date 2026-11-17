@@ -32,8 +32,8 @@ O projeto já inclui o workflow em `.github/workflows/deploy-pages.yml`.
 
 1. Abra **Settings → Pages** no repositório.
 2. Em **Build and deployment**, selecione **GitHub Actions**.
-3. Envie alterações para a branch `main` ou execute o workflow **Deploy to GitHub Pages** manualmente.
-4. Depois da primeira execução, o endereço ficará disponível em **Settings → Pages**.
+3. Para a primeira publicação, abra **Actions → Deploy to GitHub Pages → Run workflow**.
+4. Depois disso, cada envio para `main` fará uma nova publicação automaticamente. O endereço ficará disponível em **Settings → Pages**.
 
 ## Desenvolvimento
 
