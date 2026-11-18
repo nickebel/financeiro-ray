@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id),fmt=n=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(n||0)),day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")},month=()=>day().slice(0,7),df=s=>s?new Date(s+"T12:00:00").toLocaleDateString("pt-BR"):"—",esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOCAL_PROFILE_ID="ray-personal-profile";
 const THEME_STORAGE_KEY="ray-personal-theme";
-const cats=["Moradia","Alimentação","Transporte","Saúde","Educação","Lazer","Compras","Assinaturas","Salário","Freelance","Investimentos","Outros"],titles={dashboard:"Visão geral",transactions:"Lançamentos",cards:"Cartões e parcelas",bills:"Contas a pagar",goals:"Metas de economia",reports:"Relatórios"},tables={transaction:"transactions",card:"cards",installment:"installments",bill:"bills",goal:"goals"};
+const cats=["Moradia","Alimentação","Transporte","Saúde","Educação","Lazer","Compras","Assinaturas","Salário","Freelance","Investimentos","Outros"],titles={dashboard:"Visão geral",transactions:"Lançamentos",cards:"Cartões e parcelas",bills:"Contas a pagar",goals:"Metas de economia",reports:"Relatórios",privacy:"Dados e privacidade"},tables={transaction:"transactions",card:"cards",installment:"installments",bill:"bills",goal:"goals"};
 let db=null,user,rows={transactions:[],cards:[],installments:[],bills:[],goals:[]},edit=null,kind=null;
 function parseMoney(value){const raw=String(value??"").trim().replace(/R\$|\s/g,"");if(!raw)return null;let normalized=raw;if(raw.includes(",")&&raw.includes(".")){normalized=raw.lastIndexOf(",")>raw.lastIndexOf(".")?raw.replace(/\./g,"").replace(",","."):raw.replace(/,/g,"")}else if(raw.includes(",")){normalized=raw.replace(",",".")}const number=Number(normalized);return Number.isFinite(number)?number:NaN}
 function msg(id,s){const node=$(id);if(node)node.textContent=s||""}
@@ -65,7 +65,7 @@ function applyTheme(theme,persist=false){
  const dark=mode==="dark";
  document.documentElement.dataset.theme=mode;
  const meta=$("themeColorMeta");
- if(meta)meta.setAttribute("content",dark?"#071B31":"#FAFAFA");
+ if(meta)meta.setAttribute("content",dark?"#071B31":"#F1EEE7");
  const button=$("themeToggleBtn"),label=$("themeToggleLabel");
  if(button){
   const next=dark?"Modo claro":"Modo azul";
@@ -86,10 +86,61 @@ function initTheme(){
  if(button)button.addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark",true));
 }
 
+function initMobileModalSupport(){
+ const dialog=$("modalBackdrop");
+ if(!dialog)return;
+ const viewport=window.visualViewport;
+ const clear=()=>{
+  dialog.classList.remove("keyboard-visible");
+  document.body.classList.remove("keyboard-visible");
+  dialog.style.removeProperty("--visual-viewport-height");
+  dialog.style.removeProperty("--visual-viewport-top");
+ };
+ const sync=()=>{
+  if(!window.matchMedia("(max-width: 48rem)").matches||!dialog.open||!viewport){clear();return}
+  const keyboardOpen=(window.innerHeight-viewport.height)>120;
+  if(!keyboardOpen){clear();return}
+  dialog.style.setProperty("--visual-viewport-height",Math.max(180,viewport.height-12)+"px");
+  dialog.style.setProperty("--visual-viewport-top",Math.max(0,viewport.offsetTop)+"px");
+  dialog.classList.add("keyboard-visible");
+  document.body.classList.add("keyboard-visible");
+ };
+ viewport?.addEventListener("resize",sync);
+ viewport?.addEventListener("scroll",sync);
+ window.addEventListener("orientationchange",sync);
+ dialog.addEventListener("close",clear);
+ dialog.addEventListener("focusin",event=>{
+  const target=event.target;
+  if(!target.matches("input,select,textarea"))return;
+  window.requestAnimationFrame(()=>target.scrollIntoView({block:"nearest",behavior:"smooth"}));
+ });
+}
 function init(){
  initTheme();
+ initMobileModalSupport();
  if($("monthFilter"))$("monthFilter").value=month();
  $("navigation").onclick=e=>{const b=e.target.closest("[data-page]");if(b)go(b.dataset.page)};
+ const mobileTabs=$("mobileTabbar");
+ if(mobileTabs)mobileTabs.addEventListener("click",event=>{
+  const moreButton=event.target.closest("#mobileMoreToggle");
+  if(moreButton){
+   const menu=$("mobileMoreMenu"),opening=menu.classList.contains("hidden");
+   menu.classList.toggle("hidden",!opening);moreButton.setAttribute("aria-expanded",String(opening));return;
+  }
+  const action=event.target.closest("[data-action]");
+  if(action){
+   const actions={theme:"themeToggleBtn",backup:"exportBackupBtn",restore:"importBackupBtn",install:"installAppBtn"};
+   $(actions[action.dataset.action])?.click();return;
+  }
+  const tab=event.target.closest("[data-page]");
+  if(tab)go(tab.dataset.page);
+ });
+ document.addEventListener("click",event=>{
+  if(mobileTabs&&!mobileTabs.contains(event.target)){
+   $("mobileMoreMenu")?.classList.add("hidden");
+   $("mobileMoreToggle")?.setAttribute("aria-expanded","false");
+  }
+ });
  $("menuBtn").onclick=()=>{
   const nav=$("app").querySelector(".sidebar"),isOpen=nav.classList.toggle("open");
   setMenuButtonState(isOpen);
@@ -181,6 +232,15 @@ function go(p,writeHistory=true){
   const active=b.dataset.page===p;b.classList.toggle("active",active);
   if(active)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
  });
+ const mobileTabs=$("mobileTabbar");
+ if(mobileTabs){
+  mobileTabs.querySelectorAll(".mobile-tab[data-page]").forEach(b=>{
+   if(b.dataset.page===p)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
+  });
+  const more=$("mobileMoreToggle"),moreActive=["goals","reports","privacy"].includes(p);
+  if(more){if(moreActive)more.setAttribute("aria-current","page");else more.removeAttribute("aria-current");more.setAttribute("aria-expanded","false")}
+  $("mobileMoreMenu")?.classList.add("hidden");
+ }
  $("pageTitle").textContent=titles[p];closeMenu();render();scrollTo({top:0,behavior:"auto"});
 }
 async function load(){
@@ -275,19 +335,22 @@ function fieldError(name,message){
 function field(n,l,t="text",o={}){
  const id="field-"+n;let c;
  if(t==="select")c='<select id="'+id+'" name="'+n+'" '+(o.required?'required aria-required="true"':"")+'>'+o.options.map(x=>'<option value="'+esc(x.value)+'">'+esc(x.label)+'</option>').join("")+'</select>';
- else if(t==="textarea")c='<textarea id="'+id+'" name="'+n+'" rows="3"></textarea>';
- else if(t==="money")c='<input id="'+id+'" name="'+n+'" type="text" inputmode="decimal" autocomplete="off" data-money="true" '+(o.required?'required aria-required="true"':"")+' placeholder="'+esc(o.placeholder||"0,00")+'">';
- else c='<input id="'+id+'" name="'+n+'" type="'+t+'" '+(o.required?'required aria-required="true"':"")+(o.min!==undefined?' min="'+o.min+'"':"")+(o.step?' step="'+o.step+'"':"")+(o.placeholder?' placeholder="'+esc(o.placeholder)+'"':"")+'>';
+ else if(t==="textarea")c='<textarea id="'+id+'" name="'+n+'" rows="3" autocomplete="off" enterkeyhint="next"></textarea>';
+ else if(t==="money")c='<input id="'+id+'" name="'+n+'" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="next" data-money="true" '+(o.required?'required aria-required="true"':"")+' placeholder="'+esc(o.placeholder||"0,00")+'">';
+ else c='<input id="'+id+'" name="'+n+'" type="'+t+'" '+(o.required?'required aria-required="true"':"")+(o.min!==undefined?' min="'+esc(o.min)+'"':"")+(o.max!==undefined?' max="'+esc(o.max)+'"':"")+(o.step?' step="'+esc(o.step)+'"':"")+(o.inputmode?' inputmode="'+esc(o.inputmode)+'"':(t==="number"?' inputmode="numeric"':""))+(o.maxlength?' maxlength="'+esc(o.maxlength)+'"':"")+' autocomplete="off" enterkeyhint="next"'+(o.placeholder?' placeholder="'+esc(o.placeholder)+'"':"")+'>';
  return '<div class="form-field'+(o.full?" full-field":"")+'"><label for="'+id+'">'+esc(l)+(o.required?' <span class="required-word">obrigatório</span>':'')+'</label>'+c+'</div>';
 }
 function open(k,rec=null){edit=rec;kind=k;msg("formMessage","");let f=[],add=(...a)=>f.push(field(...a)),sel=a=>a.map(x=>({value:x,label:x}));if(k==="transaction"){add("type","Tipo","select",{required:true,options:[{value:"expense",label:"Despesa"},{value:"income",label:"Entrada"}]});add("description","Descrição","text",{required:true});add("amount","Valor (R$)","money",{required:true});add("category","Categoria","select",{options:sel(cats)});add("date","Data","date",{required:true});add("payment_method","Forma de pagamento","select",{options:sel(["Pix","Dinheiro","Débito","Crédito","Transferência","Outro"])});add("notes","Observações","textarea",{full:true})}
-if(k==="card"){add("name","Nome do cartão","text",{required:true});add("bank","Instituição / banco","text",{placeholder:"Ex.: Nubank, Itaú, Inter..."});add("network","Bandeira do cartão","select",{required:true,options:[{value:"Visa",label:"Visa"},{value:"Mastercard",label:"Mastercard"},{value:"Elo",label:"Elo"},{value:"Hipercard",label:"Hipercard"},{value:"American Express",label:"American Express"},{value:"Outra",label:"Outra"}]});add("last_four","Últimos 4 dígitos","text",{placeholder:"Opcional"});add("limit_amount","Limite total (R$)","money",{placeholder:"Opcional"});add("closing_day","Dia de fechamento","number",{min:"1",step:"1"});add("due_day","Dia de vencimento","number",{min:"1",step:"1"})}
+if(k==="card"){add("name","Nome do cartão","text",{required:true});add("bank","Instituição / banco","text",{placeholder:"Ex.: Nubank, Itaú, Inter..."});add("network","Bandeira do cartão","select",{required:true,options:[{value:"Visa",label:"Visa"},{value:"Mastercard",label:"Mastercard"},{value:"Elo",label:"Elo"},{value:"Hipercard",label:"Hipercard"},{value:"American Express",label:"American Express"},{value:"Outra",label:"Outra"}]});add("last_four","Últimos 4 dígitos","text",{placeholder:"Opcional",inputmode:"numeric",maxlength:"4"});add("limit_amount","Limite total (R$)","money",{placeholder:"Opcional"});add("closing_day","Dia de fechamento","number",{min:"1",step:"1"});add("due_day","Dia de vencimento","number",{min:"1",step:"1"})}
 if(k==="installment"){add("description","Descrição da compra","text",{required:true});add("card_id","Cartão","select",{required:true,options:rows.cards.map(c=>({value:c.id,label:c.name}))});add("total_amount","Valor total (R$)","money",{required:true});add("installments_count","Quantidade de parcelas","number",{required:true,min:"1",step:"1"});add("paid_installments","Parcelas já pagas","number",{required:true,min:"0",step:"1"});add("purchase_date","Data da compra","date",{required:true})}
 if(k==="bill"){add("name","Nome da conta","text",{required:true});add("amount","Valor (R$)","money",{required:true});add("due_date","Vencimento","date",{required:true});add("category","Categoria","select",{options:sel(["Moradia","Água","Energia","Internet","Telefone","Assinatura","Saúde","Educação","Outros"])});add("paid","Já foi paga?","select",{options:[{value:"false",label:"Não, está pendente"},{value:"true",label:"Sim, foi paga"}]});add("notes","Observações","textarea",{full:true})}
 if(k==="goal"){add("name","Nome da meta","text",{required:true});add("target_amount","Valor desejado (R$)","money",{required:true});add("saved_amount","Quanto já guardou (R$)","money",{required:true});add("target_date","Data desejada","date");add("notes","Por que essa meta importa?","textarea",{full:true})}
 if(k==="contribution"){add("amount","Quanto você guardou? (R$)","money",{required:true});f.push('<p class="muted full-field">A contribuição será somada à meta “'+esc(rec.name)+'”.</p>')}
 $("modalTitle").textContent=({transaction:rec?"Editar lançamento":"Novo lançamento",card:rec?"Editar cartão":"Novo cartão",installment:rec?"Editar compra parcelada":"Nova compra parcelada",bill:rec?"Editar conta":"Nova conta",goal:rec?"Editar meta":"Nova meta",contribution:"Registrar economia"})[k];$("modalFields").innerHTML=f.join("");let form=$("editorForm");if(rec)for(let [n,v] of Object.entries(rec)){let el=form.elements.namedItem(n);if(el)el.value=v??""}if(k==="transaction"&&!rec){form.elements.date.value=day();form.elements.type.value="expense";form.elements.category.value="Outros"}if(k==="bill"&&!rec){form.elements.due_date.value=day();form.elements.paid.value="false"}if(k==="installment"&&!rec){form.elements.purchase_date.value=day();form.elements.paid_installments.value="0";form.elements.card_id.value=rows.cards[0]?.id||""}if(k==="goal"&&!rec)form.elements.saved_amount.value="0";const dialog=$("modalBackdrop");if(!dialog.open)dialog.showModal();
- window.requestAnimationFrame(()=>dialog.querySelector("input,select,textarea,button")?.focus());
+ window.requestAnimationFrame(()=>{
+  if(window.matchMedia("(max-width: 48rem)").matches)$("modalTitle").focus({preventScroll:true});
+  else dialog.querySelector("input,select,textarea")?.focus();
+ });
 }
 function close(){const dialog=$("modalBackdrop");if(dialog.open)dialog.close();edit=null;kind=null}
 async function save(e){

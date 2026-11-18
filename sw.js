@@ -1,15 +1,17 @@
 /* App shell PWA; o conteúdo financeiro é guardado apenas no IndexedDB deste navegador. */
-const CACHE_NAME = "ray-personal-shell-v1";
+const CACHE_NAME = "ray-personal-shell-v2";
 const BASE_URL = new URL("./", self.location.href);
 const SHELL_URLS = [
   BASE_URL.href,
   new URL("index.html", BASE_URL).href,
   new URL("style.css?v=ray-20261117-1", BASE_URL).href,
-  new URL("app.js?v=ray-20261117-1", BASE_URL).href,
-  new URL("pwa.js?v=ray-20261117-1", BASE_URL).href,
+  new URL("collage.css?v=ray-20261117-2", BASE_URL).href,
+  new URL("app.js?v=ray-20261117-2", BASE_URL).href,
+  new URL("pwa.js?v=ray-20261117-2", BASE_URL).href,
+  new URL("brand-mark.svg?v=ray-20261117-2", BASE_URL).href,
   new URL("offline-store.js?v=ray-20261117-1", BASE_URL).href,
   new URL("manifest.webmanifest", BASE_URL).href,
-  new URL("favicon.svg?v=ray-20261117-1", BASE_URL).href,
+  new URL("favicon.svg?v=ray-20261117-2", BASE_URL).href,
   new URL("app-icon.svg", BASE_URL).href,
   new URL("app-icon-maskable.svg", BASE_URL).href,
 

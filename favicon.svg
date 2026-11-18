@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#FAFAFA"/>
-  <text x="13" y="49" font-family="Georgia,serif" font-size="45" font-weight="500" letter-spacing="-3" fill="#003459">R</text>
+  <rect width="64" height="64" rx="10" fill="#F1EDE4"/>
+  <path d="M10 14 44 7l9 40-34 7Z" fill="#003459"/>
+  <path d="m12 25 39-8 5 12-39 8Z" fill="#C77A56"/>
+  <path d="m18 16 30-5 7 39-30 5Z" fill="#FFFCF6" stroke="#D7D0C3" stroke-width="1.5"/>
+  <path d="m26 29 18-3 2 11-18 3Z" fill="#DCE7EA"/>
+  <path d="m27 44 17-3" stroke="#003459" stroke-width="2.4" stroke-linecap="round"/>
 </svg>

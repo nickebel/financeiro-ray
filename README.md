@@ -1,30 +1,37 @@
 # Ray — finanças pessoais
 
-Um espaço simples para Ray acompanhar o próprio dinheiro, sem excesso de telas ou complicação.
+Um aplicativo pessoal para acompanhar entradas, despesas, cartões, contas e metas com uma interface simples e focada nos registros.
 
 ## O que dá para fazer
 
-- Ver o saldo, as entradas e as despesas do mês.
+- Ver o resultado do mês, as entradas e as despesas do período selecionado.
 - Registrar, editar, pesquisar e remover lançamentos.
 - Organizar cartões e compras parceladas.
 - Acompanhar contas e vencimentos.
 - Criar metas e registrar contribuições.
 - Consultar gráficos e relatórios por categoria.
 - Baixar um backup e restaurar os dados em outro aparelho.
-- Instalar o site como aplicativo e abrir recursos já carregados mesmo sem conexão.
+- Instalar o site como aplicativo e abrir arquivos de interface já carregados mesmo sem conexão.
 
 ## Privacidade e armazenamento
 
-O Ray não pede cadastro ou senha. Os lançamentos são guardados no IndexedDB do navegador, no aparelho em que foram criados. Não existe servidor, sincronização automática ou envio dos registros financeiros para este repositório.
+O Ray não pede cadastro ou senha. Os registros financeiros são guardados no IndexedDB do navegador e do perfil local utilizado no aparelho. O código do aplicativo não envia esses registros a um servidor de sincronização.
+
+O site e o repositório são públicos. Qualquer pessoa pode abrir o endereço e usar sua própria cópia local; ela não recebe automaticamente os registros guardados em outro navegador. Por não existir autenticação, alguém que utilize o mesmo aparelho e o mesmo perfil do navegador pode acessar os registros locais.
 
 Isso também significa que:
 
-- Abrir o endereço em outro celular ou computador começa com os dados vazios.
-- Outra pessoa que usar o mesmo perfil do navegador e aparelho poderá acessar os dados locais.
+- Abrir o endereço em outro celular ou computador começa com uma base local independente.
+- Os dados não são sincronizados automaticamente entre aparelhos ou navegadores.
 - Limpar os dados do navegador pode apagar os lançamentos.
-- Para trocar de aparelho, use **Baixar backup** no aparelho antigo e **Restaurar** no novo.
+- O backup JSON não é criptografado pelo aplicativo. Guarde-o em local privado.
+- Para trocar de aparelho, exporte o backup no aparelho antigo e restaure-o no novo.
 
-O repositório e a página publicada são públicos. O que fica no aparelho não é enviado ao GitHub, mas o site não tem autenticação. Use somente em um dispositivo confiável e proteja o arquivo de backup.
+Os arquivos públicos da interface são entregues pelo GitHub Pages. Esse serviço de hospedagem é separado do armazenamento financeiro local do aplicativo.
+
+## Uso no iPhone
+
+Abra o endereço pelo Safari, toque em **Compartilhar** e escolha **Adicionar à Tela de Início**. Confirme em **Adicionar**. O Ray poderá ser aberto pelo ícone na tela inicial. Essa instalação não cria sincronização em nuvem; os dados continuam vinculados ao armazenamento local do navegador/aparelho.
 
 ## Publicar no GitHub Pages
 
@@ -37,4 +44,4 @@ O projeto já inclui o workflow em `.github/workflows/deploy-pages.yml`.
 
 ## Desenvolvimento
 
-O site é feito com HTML, CSS e JavaScript nativos. Não precisa de npm, etapa de build, API key ou serviço pago. Para testar recursos como IndexedDB e instalação PWA, abra o projeto por um servidor local ou por HTTPS.
+O site é feito com HTML, CSS e JavaScript nativos. Não precisa de npm nem etapa de build. Para testar recursos como IndexedDB, teclado virtual e instalação PWA, abra o projeto por um servidor local ou por HTTPS.

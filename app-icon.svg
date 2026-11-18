@@ -1,4 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#FAFAFA"/>
-  <text x="92" y="365" font-family="Georgia,serif" font-size="330" font-weight="500" letter-spacing="-18" fill="#003459">R</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="84" fill="#F1EDE4"/>
+  <path d="M105 115 358 76l61 309-253 39Z" fill="#003459"/>
+  <path d="m92 199 315-63 38 95-315 63Z" fill="#C77A56"/>
+  <path d="m151 128 238-39 54 298-238 39Z" fill="#FFFCF6" stroke="#D7D0C3" stroke-width="12"/>
+  <path d="m216 229 145-24 17 92-145 24Z" fill="#DCE7EA"/>
+  <path d="m220 338 130-22" stroke="#003459" stroke-width="17" stroke-linecap="round"/>
+  <path d="m226 380 91-16" stroke="#A9B3B5" stroke-width="13" stroke-linecap="round"/>
+  <path d="m188 93 112-18 16 34-112 18Z" fill="#E1BE80"/>
 </svg>
